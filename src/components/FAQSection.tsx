@@ -1,6 +1,6 @@
 import { useAdmin } from '../contexts/AdminContext';
 import { motion } from 'framer-motion';
-import { MessageCircleQuestion, ArrowRight } from 'lucide-react';
+import { MessageSquareQuestion, ArrowRight } from 'lucide-react';
 
 export function FAQSection() {
   const { content } = useAdmin();
@@ -34,7 +34,7 @@ export function FAQSection() {
             >
               <div className="flex items-start gap-3">
                 <div className="bg-blue-100 p-2 rounded-full mt-1">
-                  <MessageCircleQuestion className="h-4 w-4 text-blue-600" />
+                  <MessageSquareQuestion className="h-4 w-4 text-blue-600" />
                 </div>
                 <div className="flex-1">
                   <h3 className="font-medium mb-2 text-gray-900">{faq.question}</h3>
