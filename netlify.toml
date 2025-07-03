@@ -1,6 +1,7 @@
 [build]
+  # Use clean build process
   command = "npm run build"
-  publish = "build"
+  publish = "dist"
   
   # Build environment
   [build.environment]
