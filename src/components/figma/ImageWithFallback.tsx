@@ -1,4 +1,4 @@
-import React, { useState, ImgHTMLAttributes } from 'react';
+import { useState, ImgHTMLAttributes } from 'react';
 
 interface ImageWithFallbackProps extends ImgHTMLAttributes<HTMLImageElement> {
   src: string;
