@@ -3,64 +3,62 @@
 const fs = require('fs');
 const path = require('path');
 
-console.log('🔍 Build Debug Information\n');
+console.log('🔍 Tailwind CSS v4 Build Debug\n');
 
-// Check file structure
-console.log('📁 Key files:');
-const keyFiles = [
+// Check critical files
+console.log('📁 Critical files:');
+const criticalFiles = [
   'src/main.tsx',
-  'src/App.tsx',
+  'src/App.tsx', 
   'src/styles/globals.css',
+  'postcss.config.js',
+  'tailwind.config.js',
   'package.json',
-  'tsconfig.json',
   'vite.config.ts'
 ];
 
-keyFiles.forEach(file => {
+criticalFiles.forEach(file => {
   const exists = fs.existsSync(file);
   console.log(`${exists ? '✅' : '❌'} ${file}`);
 });
 
-// Check src structure
-console.log('\n📂 src/ directory:');
+// Check PostCSS config
+console.log('\n⚙️  PostCSS Configuration:');
 try {
-  const srcFiles = fs.readdirSync('src', { withFileTypes: true });
-  srcFiles.forEach(file => {
-    const type = file.isDirectory() ? '📁' : '📄';
-    console.log(`  ${type} ${file.name}`);
-    
-    if (file.isDirectory() && file.name === 'components') {
-      const components = fs.readdirSync(path.join('src', file.name));
-      components.forEach(comp => {
-        console.log(`    📄 ${comp}`);
-      });
-    }
-  });
+  const postCSSContent = fs.readFileSync('postcss.config.js', 'utf8');
+  const hasTailwindPlugin = postCSSContent.includes('@tailwindcss/postcss');
+  console.log(`${hasTailwindPlugin ? '✅' : '❌'} Uses @tailwindcss/postcss plugin`);
+  console.log(`${postCSSContent.includes('autoprefixer') ? '✅' : '❌'} Has autoprefixer`);
 } catch (error) {
-  console.log('❌ Error reading src directory:', error.message);
+  console.log('❌ Error reading postcss.config.js:', error.message);
 }
 
-// Check package.json scripts
-console.log('\n📜 Package.json scripts:');
+// Check package.json dependencies
+console.log('\n📦 Dependencies:');
 try {
   const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-  Object.entries(pkg.scripts || {}).forEach(([name, script]) => {
-    console.log(`  ${name}: ${script}`);
-  });
+  const deps = { ...pkg.dependencies, ...pkg.devDependencies };
+  
+  console.log(`${deps['tailwindcss'] ? '✅' : '❌'} tailwindcss: ${deps['tailwindcss'] || 'missing'}`);
+  console.log(`${deps['@tailwindcss/postcss'] ? '✅' : '❌'} @tailwindcss/postcss: ${deps['@tailwindcss/postcss'] || 'missing'}`);
+  console.log(`${deps['autoprefixer'] ? '✅' : '❌'} autoprefixer: ${deps['autoprefixer'] || 'missing'}`);
+  console.log(`${deps['postcss'] ? '✅' : '❌'} postcss: ${deps['postcss'] || 'missing'}`);
 } catch (error) {
   console.log('❌ Error reading package.json:', error.message);
 }
 
-// Check tsconfig
-console.log('\n⚙️  TypeScript config:');
+// Check CSS file
+console.log('\n🎨 CSS Configuration:');
 try {
-  const tsconfig = JSON.parse(fs.readFileSync('tsconfig.json', 'utf8'));
-  console.log(`  Include: ${JSON.stringify(tsconfig.include)}`);
-  console.log(`  Exclude: ${JSON.stringify(tsconfig.exclude)}`);
-  console.log(`  NoEmit: ${tsconfig.compilerOptions.noEmit}`);
+  const cssContent = fs.readFileSync('src/styles/globals.css', 'utf8');
+  const hasTailwindImport = cssContent.includes('@import "tailwindcss"');
+  console.log(`${hasTailwindImport ? '✅' : '❌'} Has Tailwind CSS import`);
+  console.log(`${cssContent.includes('IBM Plex Sans') ? '✅' : '❌'} Has IBM Plex Sans font`);
+  console.log(`${cssContent.includes('bg-aurora') ? '✅' : '❌'} Has custom aurora background`);
 } catch (error) {
-  console.log('❌ Error reading tsconfig.json:', error.message);
+  console.log('❌ Error reading CSS file:', error.message);
 }
 
-console.log('\n🚀 To build: npm run build');
-console.log('🔍 To debug: node build-debug.js');
+console.log('\n🚀 Ready to build!');
+console.log('💡 To build: npm run build');
+console.log('🔧 To debug: node build-debug.js');

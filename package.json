@@ -9,13 +9,14 @@
   "license": "MIT",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "node emergency-cleanup.js && vite build",
     "preview": "vite preview",
     "type-check": "tsc --noEmit --project tsconfig.json",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "clean": "rm -rf dist",
+    "emergency-cleanup": "node emergency-cleanup.js",
     "prebuild": "npm run clean",
-    "deploy": "npm run build"
+    "postbuild": "echo 'Build complete! Deploy ready.'"
   },
   "dependencies": {
     "react": "^18.2.0",
@@ -36,6 +37,7 @@
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "@vitejs/plugin-react": "^4.0.3",
+    "@tailwindcss/postcss": "^4.0.0-alpha.4",
     "autoprefixer": "^10.4.14",
     "eslint": "^8.45.0",
     "eslint-plugin-react-hooks": "^4.6.0",
@@ -47,6 +49,8 @@
   },
   "engines": {
     "node": ">=18.0.0",
-    "npm": ">=9.0.0"
-  }
+    "npm": ">=10.0.0"
+  },
+  "main": "src/main.tsx",
+  "type": "module"
 }
