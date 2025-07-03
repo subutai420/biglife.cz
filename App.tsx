@@ -1,3 +1,5 @@
-// This file has been moved to /src/App.tsx
-// Please use the version in the src directory
-export { default } from './src/App';
+// DEPRECATED - Use /src/App.tsx instead
+// This file exists only to prevent import errors during migration
+export default function DeprecatedApp() {
+  return null;
+}

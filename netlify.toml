@@ -4,7 +4,19 @@
 
 [build.environment]
   NODE_VERSION = "18"
-  NPM_VERSION = "8"
+  NPM_VERSION = "10"
+
+# Build processing
+[build.processing]
+  skip_processing = false
+
+[build.processing.css]
+  bundle = true
+  minify = true
+
+[build.processing.js]
+  bundle = true
+  minify = true
 
 [[redirects]]
   from = "/*"
