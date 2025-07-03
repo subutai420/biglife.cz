@@ -1,24 +1,25 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
-export interface TeamMember {
-  id: string;
-  name: string;
-  position: string;
-  description: string;
+// Types for all content
+export interface Property {
+  id: number;
   image: string;
+  location: string;
+  type: string;
+  status: 'Pronajato' | 'Akvizice' | 'Připravujeme';
+  description: string;
 }
 
-export interface Property {
-  id: string;
-  type: string;
-  location: string;
-  description: string;
+export interface TeamMember {
+  id: number;
+  name: string;
+  position: string;
   image: string;
-  status: 'Pronajato' | 'Akvizice' | 'Připravujeme';
+  description: string;
 }
 
 export interface FAQ {
-  id: string;
+  id: number;
   question: string;
   answer: string;
 }
@@ -26,9 +27,8 @@ export interface FAQ {
 export interface HeroContent {
   title: string;
   subtitle: string;
-  description: string;
-  ctaText: string;
-  highlightText: string;
+  ctaPrimary: string;
+  ctaSecondary: string;
 }
 
 export interface ContactInfo {
@@ -42,174 +42,257 @@ export interface ContactInfo {
 }
 
 export interface CompanyValues {
-  mission: { title: string; description: string };
-  experience: { title: string; description: string };
-  trust: { title: string; description: string };
-  transparency: { title: string; description: string };
+  mission: { title: string; description: string; };
+  experience: { title: string; description: string; };
+  trust: { title: string; description: string; };
+  transparency: { title: string; description: string; };
 }
 
-export interface ContentState {
-  teamMembers: TeamMember[];
+export interface WebsiteContent {
+  hero: HeroContent;
   properties: Property[];
+  teamMembers: TeamMember[];
   faqs: FAQ[];
-  heroContent: HeroContent;
-  aboutText: string;
   contactInfo: ContactInfo;
   companyValues: CompanyValues;
+  aboutText: string;
 }
 
 interface AdminContextType {
   isAdminMode: boolean;
-  toggleAdminMode: (password?: string) => boolean;
-  content: ContentState;
-  updateContent: (newContent: Partial<ContentState>) => void;
+  setIsAdminMode: (mode: boolean) => void;
+  content: WebsiteContent;
+  updateContent: (newContent: Partial<WebsiteContent>) => void;
+  addProperty: (property: Omit<Property, 'id'>) => void;
+  updateProperty: (id: number, property: Partial<Property>) => void;
+  deleteProperty: (id: number) => void;
+  addTeamMember: (member: Omit<TeamMember, 'id'>) => void;
+  updateTeamMember: (id: number, member: Partial<TeamMember>) => void;
+  deleteTeamMember: (id: number) => void;
+  addFAQ: (faq: Omit<FAQ, 'id'>) => void;
+  updateFAQ: (id: number, faq: Partial<FAQ>) => void;
+  deleteFAQ: (id: number) => void;
 }
 
-const defaultContent: ContentState = {
-  teamMembers: [
-    {
-      id: '1',
-      name: 'Ing. Pavel Novák',
-      position: 'Ředitel společnosti',
-      description: 'S více než 15 lety zkušeností v realitním sektoru vede naši společnost k úspěchu.',
-      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
-    },
-    {
-      id: '2', 
-      name: 'Mgr. Jana Svobodová',
-      position: 'Investiční poradkyně',
-      description: 'Specialistka na investiční strategie s certifikací pro finanční poradenství.',
-      image: 'https://images.unsplash.com/photo-1494790108755-2616b332e234?w=150&h=150&fit=crop&crop=face'
-    },
-    {
-      id: '3',
-      name: 'Bc. Martin Procházka', 
-      position: 'Správce nemovitostí',
-      description: 'Zajišťuje profesionální správu našeho portfolia nemovitostí a vztahy s nájemci.',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face'
-    }
-  ],
+const defaultContent: WebsiteContent = {
+  hero: {
+    title: 'Zhodnoťte své peníze o 6 % ročně. Investujte s námi do reálných nemovitostí.',
+    subtitle: 'Garantujeme stabilní výnos a bezpečí vaší investice podložené smlouvou. Vaše peníze pracují pro vás.',
+    ctaPrimary: 'Zjistit více',
+    ctaSecondary: 'Stát se investorem'
+  },
   properties: [
     {
-      id: '1',
-      type: 'Byt 2+1',
-      location: 'Praha 6 - Dejvice',
-      description: 'Moderní byt v klidné části Dejvic, výborná dostupnost do centra.',
-      image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop',
-      status: 'Pronajato'
+      id: 1,
+      image: 'https://images.unsplash.com/photo-1555636222-cae831e670b3?w=400&h=300&fit=crop',
+      location: 'Hradec Králové',
+      type: 'Byt 3+1',
+      status: 'Pronajato',
+      description: 'Moderní byt v klidné lokalitě s výbornou dostupností do centra města.'
     },
     {
-      id: '2', 
+      id: 2,
+      image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop',
+      location: 'Pardubice',
+      type: 'Byt 2+1',
+      status: 'Pronajato',
+      description: 'Zrekonstruovaný byt blízko centra s velkým balkonem a garážovým stáním.'
+    },
+    {
+      id: 3,
+      image: 'https://images.unsplash.com/photo-1574362848149-11496d93a7c7?w=400&h=300&fit=crop',
+      location: 'České Budějovice',
       type: 'Byt 3+1',
-      location: 'Brno - Žabovřesky',
-      description: 'Prostorný byt s balkonem, ideální pro rodiny.',
+      status: 'Akvizice',
+      description: 'Prostorný byt v nové zástavbě s moderním vybavením a parkováním.'
+    },
+    {
+      id: 4,
       image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=300&fit=crop',
-      status: 'Akvizice'
+      location: 'Liberec',
+      type: 'Byt 2+1',
+      status: 'Připravujeme',
+      description: 'Investiční příležitost v rostoucí lokalitě s vysokým potenciálem.'
+    }
+  ],
+  teamMembers: [
+    {
+      id: 1,
+      name: 'Petr Svoboda',
+      position: 'Jednatel společnosti',
+      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face',
+      description: '15 let zkušeností v oblasti nemovitostí a financí. Absolvent VŠE Praha.'
+    },
+    {
+      id: 2,
+      name: 'Jana Nováková',
+      position: 'Manažerka akvizic',
+      image: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=200&h=200&fit=crop&crop=face',
+      description: 'Specialistka na vyhledávání a hodnocení investičních nemovitostí s 10letou praxí.'
+    },
+    {
+      id: 3,
+      name: 'Tomáš Procházka',
+      position: 'Správce portfolia',
+      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face',
+      description: 'Odborník na správu nemovitostí a komunikaci s nájemníky. Certifikovaný realitní makléř.'
     }
   ],
   faqs: [
     {
-      id: '1',
-      question: 'Jaká je minimální výše investice?',
-      answer: 'Minimální investice činí 50 000 Kč. Tato částka nám umožňuje efektivně spravovat vaše prostředky a zajistit slíbený výnos.'
+      id: 1,
+      question: 'Jak přesně je moje investice zajištěna?',
+      answer: 'Vaše investice je zajištěna smlouvou o půjčce, která je právně závazná a definuje jasné podmínky vrácení vaší investice včetně úroků. Každá smlouva je podložena konkrétní nemovitostí v našem portfoliu.'
     },
     {
-      id: '2',
-      question: 'Jak často dostávám výnosy z investice?',
-      answer: 'Výnosy vyplácíme každý měsíc na váš účet. První výplata proběhne měsíc po úspěšném investování vaších prostředků.'
+      id: 2,
+      question: 'Jaká jsou rizika spojená s investicí?',
+      answer: 'Hlavní rizika zahrnují pokles cen nemovitostí, prázdnost bytu nebo platební neschopnost společnosti. Tato rizika minimalizujeme pečlivým výběrem nemovitostí, diverzifikací portfolia a udržováním finančních rezerv. Investice není pojištěna státem jako bankovní vklady.'
     },
     {
-      id: '3',
-      question: 'Mohu svou investici předčasně ukončit?',
-      answer: 'Ano, investici můžete ukončit s dvouměsíční výpovědní lhůtou. Po uplynutí této lhůty vám vrátíme celou investovanou částku včetně poměrné části úroků.'
+      id: 3,
+      question: 'Musím zisk nějak danit?',
+      answer: 'Ano, zisk z investice podléhá dani z příjmů podle platné legislativy. Doporučujeme konzultaci s daňovým poradcem. Na konci roku vám poskytneme potřebné dokumenty pro daňové přiznání.'
     }
   ],
-  heroContent: {
-    title: 'Investice do nemovitostí s garantovaným výnosem',
-    subtitle: '6% ročně',
-    description: 'Necháte své peníze vydělávat prostřednictvím investic do nemovitostí. Bezpečné, transparentní a ziskové.',
-    ctaText: 'Chci investovat',
-    highlightText: 'Garantované výnosy'
-  },
-  aboutText: 'Jsme specializovaná firma zaměřená na investice do nemovitostí s dlouhodobou tradicí a prokázanými výsledky. Naše mise je jednoduchá - pomoci našim klientům zhodnotit jejich úspory prostřednictvím bezpečných a výnosných investic do realitního trhu.',
   contactInfo: {
-    phone: '+420 123 456 789',
-    email: 'dan.bubak@gmail.com',
-    address: 'Václavské náměstí 123, 110 00 Praha 1',
-    companyName: 'Biglife Investment s.r.o.',
+    phone: '+420 777 123 456',
+    email: 'info@biglife.cz',
+    address: 'Václavské náměstí 1, 110 00 Praha 1',
+    companyName: 'Biglife s.r.o.',
     ico: '12345678',
     dic: 'CZ12345678',
-    registration: 'Zapsána v obchodním rejstříku vedeném Městským soudem v Praze, oddíl C, vložka 12345'
+    registration: 'OR Městský soud v Praze, oddíl C, vložka 98765'
   },
   companyValues: {
     mission: {
       title: 'Naše mise',
-      description: 'Poskytovat bezpečné a výnosné investiční příležitosti v oblasti nemovitostí.'
+      description: 'Chceme, aby vaše peníze pracovaly pro vás, ne vy pro peníze. Poskytujeme stabilní a transparentní investiční příležitosti.'
     },
     experience: {
       title: 'Zkušenosti',
-      description: 'Více než 10 let zkušeností na realitním trhu a stovky spokojených investorů.'
+      description: 'Více než 50 úspěšně realizovaných investic do nemovitostí s celkovou hodnotou přes 100 milionů korun.'
     },
     trust: {
-      title: 'Důvěra',
-      description: 'Budujeme dlouhodobé vztahy založené na transparentnosti a dodržování závazků.'
+      title: 'Důvěra klientů',
+      description: 'Spolupracujeme s více než 200 spokojených investorů, kteří nám důvěřují své úspory.'
     },
     transparency: {
       title: 'Transparentnost',
-      description: 'Poskytujeme jasné informace o investicích a pravidelné reporty o výnosech.'
+      description: 'Veškeré investice jsou podložené smlouvami a pravidelně reportujeme o stavu portfolia.'
     }
-  }
+  },
+  aboutText: 'Jsme tým odborníků s dlouholetými zkušenostmi v oblasti nemovitostí a investic. Naším cílem je poskytovat našim klientům stabilní a bezpečné investiční příležitosti.'
 };
 
 const AdminContext = createContext<AdminContextType | undefined>(undefined);
 
 export function AdminProvider({ children }: { children: ReactNode }) {
   const [isAdminMode, setIsAdminMode] = useState(false);
-  const [content, setContent] = useState<ContentState>(defaultContent);
+  const [content, setContent] = useState<WebsiteContent>(defaultContent);
 
   // Load content from localStorage on mount
   useEffect(() => {
-    const savedContent = localStorage.getItem('biglife_content');
+    const savedContent = localStorage.getItem('websiteContent');
     if (savedContent) {
       try {
-        const parsedContent = JSON.parse(savedContent);
-        setContent({ ...defaultContent, ...parsedContent });
+        setContent(JSON.parse(savedContent));
       } catch (error) {
         console.error('Error loading saved content:', error);
       }
     }
   }, []);
 
-  // Save content to localStorage when it changes
+  // Save content to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem('biglife_content', JSON.stringify(content));
+    localStorage.setItem('websiteContent', JSON.stringify(content));
   }, [content]);
 
-  const toggleAdminMode = (password?: string): boolean => {
-    if (!isAdminMode) {
-      // Entering admin mode - check password
-      if (password === 'admin123') {
-        setIsAdminMode(true);
-        return true;
-      }
-      return false;
-    } else {
-      // Exiting admin mode - no password needed
-      setIsAdminMode(false);
-      return true;
-    }
+  const updateContent = (newContent: Partial<WebsiteContent>) => {
+    setContent(prev => ({ ...prev, ...newContent }));
   };
 
-  const updateContent = (newContent: Partial<ContentState>) => {
-    setContent(prev => ({ ...prev, ...newContent }));
+  const addProperty = (property: Omit<Property, 'id'>) => {
+    const newProperty = { ...property, id: Date.now() };
+    setContent(prev => ({
+      ...prev,
+      properties: [...prev.properties, newProperty]
+    }));
+  };
+
+  const updateProperty = (id: number, property: Partial<Property>) => {
+    setContent(prev => ({
+      ...prev,
+      properties: prev.properties.map(p => p.id === id ? { ...p, ...property } : p)
+    }));
+  };
+
+  const deleteProperty = (id: number) => {
+    setContent(prev => ({
+      ...prev,
+      properties: prev.properties.filter(p => p.id !== id)
+    }));
+  };
+
+  const addTeamMember = (member: Omit<TeamMember, 'id'>) => {
+    const newMember = { ...member, id: Date.now() };
+    setContent(prev => ({
+      ...prev,
+      teamMembers: [...prev.teamMembers, newMember]
+    }));
+  };
+
+  const updateTeamMember = (id: number, member: Partial<TeamMember>) => {
+    setContent(prev => ({
+      ...prev,
+      teamMembers: prev.teamMembers.map(m => m.id === id ? { ...m, ...member } : m)
+    }));
+  };
+
+  const deleteTeamMember = (id: number) => {
+    setContent(prev => ({
+      ...prev,
+      teamMembers: prev.teamMembers.filter(m => m.id !== id)
+    }));
+  };
+
+  const addFAQ = (faq: Omit<FAQ, 'id'>) => {
+    const newFAQ = { ...faq, id: Date.now() };
+    setContent(prev => ({
+      ...prev,
+      faqs: [...prev.faqs, newFAQ]
+    }));
+  };
+
+  const updateFAQ = (id: number, faq: Partial<FAQ>) => {
+    setContent(prev => ({
+      ...prev,
+      faqs: prev.faqs.map(f => f.id === id ? { ...f, ...faq } : f)
+    }));
+  };
+
+  const deleteFAQ = (id: number) => {
+    setContent(prev => ({
+      ...prev,
+      faqs: prev.faqs.filter(f => f.id !== id)
+    }));
   };
 
   return (
     <AdminContext.Provider value={{
       isAdminMode,
-      toggleAdminMode,
+      setIsAdminMode,
       content,
-      updateContent
+      updateContent,
+      addProperty,
+      updateProperty,
+      deleteProperty,
+      addTeamMember,
+      updateTeamMember,
+      deleteTeamMember,
+      addFAQ,
+      updateFAQ,
+      deleteFAQ
     }}>
       {children}
     </AdminContext.Provider>

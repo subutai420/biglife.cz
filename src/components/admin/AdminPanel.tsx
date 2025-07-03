@@ -4,10 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { ArrowLeft, Settings, Users, Building, MessageSquare, Mail } from 'lucide-react';
 
 export function AdminPanel() {
-  const { toggleAdminMode } = useAdmin();
+  const { setIsAdminMode } = useAdmin();
 
   const handleExit = () => {
-    toggleAdminMode();
+    setIsAdminMode(false);
   };
 
   return (
@@ -92,7 +92,7 @@ export function AdminPanel() {
             <CardContent>
               <p className="text-gray-600">Zobrazit odeslané zprávy</p>
               <Button className="mt-4 w-full" disabled>
-                Zobrazit zprávy
+                Spravovat zprávy
               </Button>
             </CardContent>
           </Card>
@@ -101,7 +101,7 @@ export function AdminPanel() {
         <div className="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-200">
           <p className="text-blue-800">
             <strong>Demo režim:</strong> Toto je zjednodušená verze admin panelu pro build testing. 
-            Plná funkcionalnost bude dostupná po dokončení migrace.
+            Plná funkcionalita bude dostupná po dokončení migrace.
           </p>
         </div>
       </div>

@@ -1,23 +1,23 @@
-import { useState, ImgHTMLAttributes } from 'react';
+import { useState } from 'react';
 
-interface ImageWithFallbackProps extends ImgHTMLAttributes<HTMLImageElement> {
+interface ImageWithFallbackProps {
   src: string;
   alt: string;
+  className?: string;
   fallbackSrc?: string;
 }
 
 export function ImageWithFallback({ 
   src, 
   alt, 
-  fallbackSrc = 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop', 
-  className = '',
-  ...props 
+  className, 
+  fallbackSrc = 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=500&fit=crop&crop=center'
 }: ImageWithFallbackProps) {
   const [imgSrc, setImgSrc] = useState(src);
   const [hasError, setHasError] = useState(false);
 
   const handleError = () => {
-    if (!hasError) {
+    if (!hasError && fallbackSrc) {
       setHasError(true);
       setImgSrc(fallbackSrc);
     }
@@ -27,9 +27,9 @@ export function ImageWithFallback({
     <img
       src={imgSrc}
       alt={alt}
-      onError={handleError}
       className={className}
-      {...props}
+      onError={handleError}
+      loading="lazy"
     />
   );
 }

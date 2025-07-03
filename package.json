@@ -9,14 +9,13 @@
   "license": "MIT",
   "scripts": {
     "dev": "vite",
-    "build": "node emergency-cleanup.js && vite build",
+    "build": "vite build",
     "preview": "vite preview",
     "type-check": "tsc --noEmit --project tsconfig.json",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "clean": "rm -rf dist",
-    "emergency-cleanup": "node emergency-cleanup.js",
     "prebuild": "npm run clean",
-    "postbuild": "echo 'Build complete! Deploy ready.'"
+    "postbuild": "echo 'Build complete! Ready for deployment.'"
   },
   "dependencies": {
     "react": "^18.2.0",
@@ -51,6 +50,5 @@
     "node": ">=18.0.0",
     "npm": ">=10.0.0"
   },
-  "main": "src/main.tsx",
-  "type": "module"
+  "main": "src/main.tsx"
 }
