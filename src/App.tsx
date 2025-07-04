@@ -9,7 +9,7 @@ import { AboutSection } from './components/AboutSection';
 import { FAQSection } from './components/FAQSection';
 import { ContactSection } from './components/ContactSection';
 import { Footer } from './components/Footer';
-import { Toaster } from './components/ui/sonner';
+import { Toaster } from 'sonner@2.0.3';
 
 function AppContent() {
   const { isAdminMode } = useAdmin();
