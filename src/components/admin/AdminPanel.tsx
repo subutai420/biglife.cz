@@ -1,109 +1,101 @@
-import { useAdmin } from '../../contexts/AdminContext';
+import { useState } from 'react';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { ArrowLeft, Settings, Users, Building, MessageSquare, Mail } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
+import { 
+  Home, 
+  Building, 
+  Users, 
+  HelpCircle, 
+  Phone, 
+  Info,
+  Eye,
+  Save,
+  MessageSquare
+} from 'lucide-react';
+import { useAdmin } from '../../contexts/AdminContext';
+import { HeroEditor } from './HeroEditor';
+import { PropertiesEditor } from './PropertiesEditor';
+import { TeamEditor } from './TeamEditor';
+import { FAQEditor } from './FAQEditor';
+import { ContactEditor } from './ContactEditor';
+import { AboutEditor } from './AboutEditor';
+import { ContactSubmissionsViewer } from './ContactSubmissionsViewer';
 
 export function AdminPanel() {
   const { setIsAdminMode } = useAdmin();
+  const [activeTab, setActiveTab] = useState('hero');
 
-  const handleExit = () => {
-    setIsAdminMode(false);
-  };
+  const tabs = [
+    { value: 'hero', label: 'Hlavní stránka', icon: Home },
+    { value: 'properties', label: 'Nemovitosti', icon: Building },
+    { value: 'team', label: 'Tým', icon: Users },
+    { value: 'faq', label: 'FAQ', icon: HelpCircle },
+    { value: 'contact', label: 'Kontakt', icon: Phone },
+    { value: 'messages', label: 'Zprávy', icon: MessageSquare },
+    { value: 'about', label: 'O nás', icon: Info }
+  ];
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 p-4">
       <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Admin Panel</h1>
-          <Button onClick={handleExit} variant="outline">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Zpět na web
-          </Button>
+        <div className="bg-white rounded-lg shadow-sm mb-6">
+          <div className="flex items-center justify-between p-6 border-b">
+            <div>
+              <h1 className="text-2xl font-bold">Administrace webu</h1>
+              <p className="text-gray-600">Správa obsahu a nemovitostí</p>
+            </div>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => setIsAdminMode(false)}>
+                <Eye className="w-4 h-4 mr-2" />
+                Zobrazit web
+              </Button>
+            </div>
+          </div>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Settings className="h-5 w-5" />
-                Obsah webu
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600">Upravit texty, nadpisy a obsah stránek</p>
-              <Button className="mt-4 w-full" disabled>
-                Spravovat obsah
-              </Button>
-            </CardContent>
-          </Card>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-7 h-auto p-1">
+            {tabs.map((tab) => (
+              <TabsTrigger 
+                key={tab.value} 
+                value={tab.value}
+                className="flex flex-col items-center gap-1 py-3"
+              >
+                <tab.icon className="w-4 h-4" />
+                <span className="text-xs">{tab.label}</span>
+              </TabsTrigger>
+            ))}
+          </TabsList>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5" />
-                Tým
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600">Spravovat členy týmu a jejich profily</p>
-              <Button className="mt-4 w-full" disabled>
-                Spravovat tým
-              </Button>
-            </CardContent>
-          </Card>
+          <TabsContent value="hero">
+            <HeroEditor />
+          </TabsContent>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Building className="h-5 w-5" />
-                Nemovitosti
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600">Přidat a upravit nemovitosti v portfoliu</p>
-              <Button className="mt-4 w-full" disabled>
-                Spravovat nemovitosti
-              </Button>
-            </CardContent>
-          </Card>
+          <TabsContent value="properties">
+            <PropertiesEditor />
+          </TabsContent>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MessageSquare className="h-5 w-5" />
-                FAQ
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600">Upravit často kladené otázky</p>
-              <Button className="mt-4 w-full" disabled>
-                Spravovat FAQ
-              </Button>
-            </CardContent>
-          </Card>
+          <TabsContent value="team">
+            <TeamEditor />
+          </TabsContent>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Mail className="h-5 w-5" />
-                Kontaktní formulář
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600">Zobrazit odeslané zprávy</p>
-              <Button className="mt-4 w-full" disabled>
-                Spravovat zprávy
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
+          <TabsContent value="faq">
+            <FAQEditor />
+          </TabsContent>
 
-        <div className="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-200">
-          <p className="text-blue-800">
-            <strong>Demo režim:</strong> Toto je zjednodušená verze admin panelu pro build testing. 
-            Plná funkcionalita bude dostupná po dokončení migrace.
-          </p>
-        </div>
+          <TabsContent value="contact">
+            <ContactEditor />
+          </TabsContent>
+
+          <TabsContent value="messages">
+            <ContactSubmissionsViewer />
+          </TabsContent>
+
+          <TabsContent value="about">
+            <AboutEditor />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
