@@ -6,7 +6,7 @@ import { Textarea } from './ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Phone, Mail, MapPin, Send, Loader2, Clock, Building } from 'lucide-react';
 import { useAdmin } from '../contexts/AdminContext';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 
 interface FormErrors {

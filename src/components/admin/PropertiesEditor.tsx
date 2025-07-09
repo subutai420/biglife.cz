@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { Plus, Edit, Trash2, Save, X } from 'lucide-react';
 import { useAdmin, Property } from '../../contexts/AdminContext';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 
 export function PropertiesEditor() {
   const { content, addProperty, updateProperty, deleteProperty } = useAdmin();
